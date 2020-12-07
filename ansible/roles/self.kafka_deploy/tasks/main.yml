@@ -1,0 +1,125 @@
+- name: install jdk 
+  apt:
+    pkg: openjdk-8-jdk
+    state: present
+    update_cache: true
+
+- name: adduser kafka
+  user:
+    name: kafka
+    state: present
+    shell: /bin/bash
+    createhome: yes
+    home: /home/kafka
+    expires: -1
+
+- name: ensure file exists /etc/default/kafka
+  copy:
+    content: ""
+    dest: /etc/default/kafka
+    force: no
+    owner: root
+    mode: 0644
+
+- name: configure broker configs 1001
+  copy:
+    src: kafka_1001
+    dest: /etc
+    owner: kafka
+    group: kafka
+    backup: yes
+  become: yes
+
+
+- name: configure broker configs 1002
+  copy:
+    src: kafka_1002
+    dest: /etc
+    owner: kafka
+    group: kafka
+    backup: yes
+  become: yes
+
+- name: configure broker configs 1003
+  copy:
+    src: kafka_1003
+    dest: /etc
+    owner: kafka
+    group: kafka
+    backup: yes
+  become: yes
+
+- name: Creates directory for logs kafka brokers
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: kafka
+    group: kafka
+    backup: yes
+  become: yes
+  loop:
+    - /var/lib/kafka1001
+    - /var/lib/kafka1002
+    - /var/lib/kafka1003
+
+- name: Download file with check (sha1)
+  get_url:
+    url: https://github.com/pid998877/kafka_deploy/raw/main/ansible/roles/self.kafka_deploy/files/kafka.tar.gz
+    dest: /tmp/kafka.tar.gz
+    checksum: sha1:139d64c37f3a1ea068326d308f46177f1d446d6e
+  become: yes
+
+- name: Unarchive a file that is already on the remote machine
+  unarchive:
+    src: /tmp/kafka.tar.gz
+    dest: /
+    remote_src: yes
+  become: yes
+
+- name: configure zookeeper-server.service
+  copy:
+    src: zookeeper-server.service
+    dest: /etc/systemd/system/zookeeper-server.service
+    backup: yes
+  become: yes
+  notify: 
+  - restart zookeeper-server
+
+- name: configure kafka@.service
+  copy:
+    src: kafka@.service
+    dest: /etc/systemd/system/kafka@.service
+    backup: yes
+  become: yes
+  notify: 
+  - restart kafka@1001
+  - restart kafka@1002
+  - restart kafka@1003
+
+- name: configure zookeeper-server
+  copy:
+    src: zookeeper-server.service
+    dest: /etc/systemd/system/zookeeper-server.service
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  become: yes
+  notify: 
+  - restart zookeeper-server
+
+- name: configure kafka@
+  copy:
+    src: kafka@.service
+    dest: /etc/systemd/system/kafka@service
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  become: yes
+  notify: 
+  - restart kafka@1001
+  - restart kafka@1002
+  - restart kafka@1003
+
+

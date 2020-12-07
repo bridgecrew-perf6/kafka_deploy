@@ -1,0 +1,20 @@
+- name: restart zookeeper-server
+  service:
+    name: zookeeper-server
+    state: restarted
+  become: yes
+- name: restart kafka@1001
+  service:
+    name: kafka@1001
+    state: restarted
+  become: yes
+- name: restart kafka@1002
+  service:
+    name: kafka@1002
+    state: restarted
+  become: yes
+- name: restart kafka@1003
+  service:
+    name: kafka@1003
+    state: restarted
+  become: yes

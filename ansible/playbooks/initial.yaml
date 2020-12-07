@@ -1,0 +1,24 @@
+---
+- name: deploy adm users
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  roles:
+    - role: common.configure_groups
+      groups_to_create:
+        - admins
+    - role: robertdebock.users
+      users_user_list:
+        - name: xxx
+          comment: pid998877 
+          groups: admins
+          cron_allow: yes
+          authorized_keys:
+            - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDEMJ8oqrFVYYXJ/zT/NBPrXZwwtfRKLUUL0XnlEgdv7IoKw13ePyAWJpCAOuK3+pO5uE3ajMyQjrzhCwKNy9s7wczHKUhRTS5h/S/ihwhs+WuAXN8NaU+mCN5fk8pEgNo1eJgTJGHeqaWXCIEa3mD+4nDWqPzcZL6aejzHppmfP7x6uCc/2s4im6fvsS9jNoCMk+OHe4eZfwOTPtILjJA3/fjaH+pD3IYksKDA+ZmvT2307rEd1dhjceT5KbWGxdixT3RqgkIrv0llO6RQ491kuPF9DKxL9/wW+N/XxTxT/LZ8nN2+hJj3EWcfpGhVOQrG+LJIaMaFEoUODVpPk0P76/OoaQ2YJYyvFpSMiG7ZK9qfyf48hvPZtVjKW2SrrWxs3+mZ851+EAd19Q3urbTbp2uwYuk9pEbYpKhLHMQQlvkFabT8EzYSRg7dJM0o7+963t7agjik5W/N+Z/e08cv6ExdYO1qh/bkAzR3YWy0Zs6PxBL3pL4UDDDiGDAPOiuHU1zyJ7oFN6+TmxT4oFG26oqJyG+PWcB5wbE6n24d5Wi568e87LnP+6zhgJftDzmmne96K7fQI/xm63hShEQPnrH+n5kVAbn5fklU4ZvAQw+BNksJaqvV8hneKv1+r1PaTXGEhs7KOfBbyuno0eCdNGFZ5Ru2VRpXwQ/GAuc4Kw== xxx@DESKTOP-SR2QF8H"
+            - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDBsBcEbbfzgHqEXljmqINC4JmI3i+368CaeMqi/2Qwvd48gRT/CYFoIoGvNSPCvU9pd8bkriuHTZ6BPhyH8REXtW9CXpA3q5L0MuE+bdsdwKtL5STaa3W278M+YeeYWgd7CUcj8F+RuZGfAWjfGfCRhbl8WN526Ql3vVXY1+ht87KGfWNoGPAKkmfH12ruR61qAfNBhXKGCeX2+AWCqT+zR9c3pHPoohvj87qYxMewqfOuQQ7Wc5y9KeXiy+Su+saEwcGtGtmSAGa2xKhvyFTPzXVrPZgHzoDcd+9eeqc5ufmv3s8/JxekFq+cJBzfvUXbGQn6nd9XJ/iKrwis2YYD7u01047KGmjBz8MODbMUkohyJ1lr7TNrVnc6YTe+xuI7M5QDVV5Oq4EgJLGfUyu/5TK4w5+slo8oWf64OH3+Z8A0U4pGVDHQl0w9JaFA4sDd6ypOH8YqdxsD2FoAZN9RFIa6tU1QCLXbrY74r/yJI90dOrPE4ZTczxMFKQThOR4TcKTu02Jhd+A8Upp5azlnfFm3uyMPyrF+jV5JKVpWz4ZqnGj5MvqtmRrH0nMgl9lOPRToD8uqpc/+M2rodCzZecSVB0y4z+RrwPgzwvkMqTOxGoVqPtV8bmCcMkUiiQbMC+NrgOS3PyUfCcEfqqCgznHQK4WwhFWDtov3cPOdaQ== xxx@xxxxx"
+          expires: -1
+          has_configs: false
+    - role: common.configure_ssh
+    - role: common.configure_hostname
+    - role: adriagalin.motd

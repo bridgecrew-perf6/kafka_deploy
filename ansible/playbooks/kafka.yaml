@@ -1,0 +1,9 @@
+---
+- name: deploy kafka brokers
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  roles:
+    - role: self.kafka_deploy
+

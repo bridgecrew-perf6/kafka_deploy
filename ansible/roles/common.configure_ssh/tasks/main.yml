@@ -1,0 +1,42 @@
+- name: configure ssh
+  copy:
+    src: sshd_config
+    dest: /etc/ssh/sshd_config
+    backup: yes
+  become: yes
+  notify: 
+  - restart sshd
+
+- name: check that keys exist
+  stat:
+    path: '/etc/ssh/ssh_host_{{ item }}_key'
+  loop:
+    - dsa
+    - ecdsa
+    - ed25519
+    - rsa
+  register: keys
+
+- name: create key
+  shell: ssh-keygen -q -N "" -t {{ item.item }} -f /etc/ssh/ssh_host_{{ item.item }}_key
+  when: not item.stat.exists
+  loop: '{{ keys.results }}'
+  become: yes
+  notify: 
+    - restart sshd
+
+- name: force regenerate all keys
+  block:
+  
+    - name: delete host keys
+      shell: rm /etc/ssh/ssh_host_*
+      args:
+        warn: no
+
+    - name: create host keys
+      command: ssh-keygen -A
+      notify: 
+      - restart sshd
+
+  become: yes
+  when: regenerate_keys is defined and regenerate_keys

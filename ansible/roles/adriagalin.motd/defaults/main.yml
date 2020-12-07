@@ -1,0 +1,39 @@
+---
+# defaults file for adriagalin.motd
+
+ag_motd_add_footer: false
+
+ag_motd_sysadmins_signature: Admins Team
+ag_motd_sysadmins_email: support@your.company
+
+ag_motd_info:
+  - " FQDN:    ": "{{ ansible_fqdn }}"
+  - " Distro:  ": "{{ ansible_distribution }} {{ ansible_distribution_version }} {{ ansible_distribution_release }}"
+  - " IP:      ": "{{ansible_all_ipv4_addresses}}"
+  - " Virtual: ": "{{ 'YES' if ansible_virtualization_role == 'guest' else 'NO' }}\n"
+  - " CPUs:    ": "{{ ansible_processor_count }}"
+  - " RAM:     ": "{{ (ansible_memtotal_mb / 1000) | round(1) }}GB"
+
+ag_motd_content: |
+
+  --------------------------------------------------------------------------
+                      This system is managed by Your Team
+  --------------------------------------------------------------------------
+
+  This is {{ ansible_fqdn }} running {{ ansible_distribution }}.
+
+  NOTE: UNAUTHORIZED ACCESS TO THIS SERVER IS PROHIBITED
+
+        You must have explicit, authorized permission to access or configure this server. 
+        Unauthorized attempts and actions to access or use this system may result in civil and/or criminal penalties. 
+        All activities performed on this server are logged and monitored.
+
+  {% for item in ag_motd_info %}
+  {% for key, value in item.items() | list %}
+  {{ key }}{{ value }}
+  {% endfor %}
+  {% endfor %}
+
+  Yours,
+  {{ ag_motd_sysadmins_signature }}
+  email: {{ ag_motd_sysadmins_email }}

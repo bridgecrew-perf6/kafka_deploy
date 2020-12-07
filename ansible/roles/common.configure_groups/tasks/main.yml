@@ -1,0 +1,30 @@
+- name: create groups
+  group:
+    name: '{{ item }}'
+    state: present
+  loop: '{{ groups_to_create }}'
+  when: groups_to_create is defined
+  become: yes
+
+- name: delete groups
+  group:
+    name: '{{ item }}'
+    state: absent
+  become: yes
+  loop: '{{ groups_to_delete }}'
+  when: groups_to_delete is defined
+
+- name: check what we come up with
+  shell: 'getent group | cut -d: -f1,3'
+  register: completed_groups
+  changed_when: false
+
+- name: configure sudo privileges
+  copy:
+    src: 'sudoers.d/{{ item }}'
+    dest: /etc/sudoers.d/
+    backup: yes
+  become: yes
+  loop:
+    - admins
+
